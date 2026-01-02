@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# GitHub
+.github
+
+# Development
+.distignore
+composer.json
+composer.lock
+phpcs.xml
+phpunit.xml
+tests
+
+# IDE & OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Build
+build
+node_modules

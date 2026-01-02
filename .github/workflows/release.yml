@@ -1,0 +1,61 @@
+name: Release Plugin
+
+on:
+  push:
+    branches:
+      - production
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get semantic version
+        id: semver
+        uses: PaulHatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "v"
+          major_pattern: "(BREAKING CHANGE:|feat!:)"
+          minor_pattern: "feat:"
+          version_format: "${major}.${minor}.${patch}"
+          bump_each_commit: false
+
+      - name: Update plugin version in kop.php
+        run: |
+          sed -i "s/Version: .*/Version: ${{ steps.semver.outputs.version }}/g" kop.php
+          sed -i "s/define( 'KOP_VERSION', '.*' );/define( 'KOP_VERSION', '${{ steps.semver.outputs.version }}' );/g" kop.php
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --prefer-dist
+
+      - name: Create plugin ZIP
+        run: |
+          mkdir -p build/kop
+          rsync -av --exclude-from='.distignore' ./ build/kop/
+          cd build
+          zip -r kop.zip kop
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.semver.outputs.version }}
+          name: v${{ steps.semver.outputs.version }}
+          body: |
+            Release version ${{ steps.semver.outputs.version }}
+
+            Download `kop.zip` and upload it to your WordPress site.
+          files: build/kop.zip
+          generate_release_notes: true
