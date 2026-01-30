@@ -6,55 +6,67 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Related posts by tags shortcode.
+ * Modifies Query Loop block with class "related-by-tags" to show posts
+ * that share taxonomy terms with the current post.
  */
 class RelatedPosts {
 
+    private static bool $is_related_query = false;
+
     public static function init(): void {
-        add_shortcode( 'related_posts_by_tags', [ self::class, 'shortcode' ] );
+        add_filter( 'pre_render_block', [ self::class, 'detect_related_block' ], 10, 2 );
+        add_filter( 'query_loop_block_query_vars', [ self::class, 'filter_query' ], 10, 3 );
     }
 
     /**
-     * Displays up to 3 related posts that share tags with the current post.
-     * Only works on single post pages.
+     * Detect when we're rendering a query block with "related-by-tags" class.
      *
-     * Usage: [related_posts_by_tags]
+     * @param string|null $pre_render The pre-rendered content.
+     * @param array       $parsed_block The block being rendered.
+     * @return string|null
      */
-    public static function shortcode(): string {
-        
-        if ( ! is_singular( 'post' ) ) {
-            return '';
+    public static function detect_related_block( ?string $pre_render, array $parsed_block ): ?string {
+        if ( $parsed_block['blockName'] !== 'core/query' ) {
+            return $pre_render;
         }
 
-        $current_post_id = get_the_ID();
+        $class_name = $parsed_block['attrs']['className'] ?? '';
+        self::$is_related_query = strpos( $class_name, 'related-by-tags' ) !== false;
+
+        return $pre_render;
+    }
+
+    /**
+     * Filter Query Loop block query to show related posts by shared taxonomy terms.
+     *
+     * @param array     $query Array of query args.
+     * @param \WP_Block $block Block instance.
+     * @param int       $page  Current page number.
+     * @return array Modified query args.
+     */
+    public static function filter_query( array $query, \WP_Block $block, int $page ): array {
+        if ( ! self::$is_related_query ) {
+            return $query;
+        }
+
+        // Reset flag after use
+        self::$is_related_query = false;
+
+        // Only on single posts
+        if ( ! is_singular( 'post' ) ) {
+            return $query;
+        }
+
+        $current_post_id = get_queried_object_id();
         $tags = wp_get_post_tags( $current_post_id, [ 'fields' => 'ids' ] );
 
         if ( empty( $tags ) ) {
-            return '';
+            return $query;
         }
 
-        $related_posts = new \WP_Query( [
-            'post_type'      => 'post',
-            'posts_per_page' => 3,
-            'post__not_in'   => [ $current_post_id ],
-            'tag__in'        => $tags,
-        ] );
+        $query['tag__in'] = $tags;
+        $query['post__not_in'] = [ $current_post_id ];
 
-        ob_start();
-        if ( $related_posts->have_posts() ) {
-            echo '<div class="related-posts">';
-            while ( $related_posts->have_posts() ) {
-                $related_posts->the_post();
-                ?>
-                <div class="related-post-item">
-                    <h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
-                </div>
-                <?php
-            }
-            echo '</div>';
-            wp_reset_postdata();
-        }
-
-        return ob_get_clean();
+        return $query;
     }
 }

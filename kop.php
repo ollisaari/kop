@@ -42,4 +42,4 @@ if ( class_exists( 'YahnisElsts\PluginUpdateChecker\v5\PucFactory' ) ) {
 
 // Initialize snippets
 KOP\Snippets\BlockPatterns::init();
-// KOP\Snippets\RelatedPosts::init();
+KOP\Snippets\RelatedPosts::init();
