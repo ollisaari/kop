@@ -13,6 +13,11 @@
         "php": ">=8.0",
         "yahnis-elsts/plugin-update-checker": "^5.6"
     },
+    "autoload": {
+        "psr-4": {
+            "KOP\\": "src/"
+        }
+    },
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true

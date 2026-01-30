@@ -40,6 +40,6 @@ if ( class_exists( 'YahnisElsts\PluginUpdateChecker\v5\PucFactory' ) ) {
     $kop_update_checker->getVcsApi()->enableReleaseAssets();
 }
 
-// Load plugin features
-require_once KOP_PLUGIN_DIR . 'includes/admin-menu.php';
-require_once KOP_PLUGIN_DIR . 'includes/shortcodes.php';
+// Initialize snippets
+KOP\Snippets\BlockPatterns::init();
+// KOP\Snippets\RelatedPosts::init();
