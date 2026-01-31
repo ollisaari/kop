@@ -28,6 +28,27 @@ if ( file_exists( KOP_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
     require KOP_PLUGIN_DIR . 'vendor/autoload.php';
 }
 
+/**
+ * Get a translated string.
+ *
+ * @param string $key     The string key from Translations::STRINGS.
+ * @param string $default Default value if key not found.
+ * @return string Translated string or default.
+ */
+function kop_t( string $key, string $default = '' ): string {
+    return \KOP\Snippets\Translations::get( $key, $default );
+}
+
+/**
+ * Echo a translated string (escaped).
+ *
+ * @param string $key     The string key from Translations::STRINGS.
+ * @param string $default Default value if key not found.
+ */
+function kop_t_e( string $key, string $default = '' ): void {
+    \KOP\Snippets\Translations::e( $key, $default );
+}
+
 // Initialize plugin update checker
 if ( class_exists( 'YahnisElsts\PluginUpdateChecker\v5\PucFactory' ) ) {
     $kop_update_checker = YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
@@ -41,5 +62,8 @@ if ( class_exists( 'YahnisElsts\PluginUpdateChecker\v5\PucFactory' ) ) {
 }
 
 // Initialize snippets
+KOP\Snippets\ArchiveTitles::init();
 KOP\Snippets\BlockPatterns::init();
+KOP\Snippets\DisableAuthorSitemap::init();
 KOP\Snippets\RelatedPosts::init();
+KOP\Snippets\Translations::init();
