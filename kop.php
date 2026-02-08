@@ -3,7 +3,7 @@
  * Plugin Name: KOP
  * Plugin URI: https://github.com/ollisaari/kop
  * Description: Custom functionality for KOP WordPress site.
- * Version: 1.0.1
+ * Version: 1.1.0
  * Author: Olli Saari
  * Author URI: https://github.com/ollisaari
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants
-define( 'KOP_VERSION', '1.0.1' );
+define( 'KOP_VERSION', '1.1.0' );
 define( 'KOP_PLUGIN_FILE', __FILE__ );
 define( 'KOP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -64,6 +64,7 @@ if ( class_exists( 'YahnisElsts\PluginUpdateChecker\v5\PucFactory' ) ) {
 // Initialize snippets
 KOP\Snippets\ArchiveTitles::init();
 KOP\Snippets\BlockPatterns::init();
+KOP\Snippets\ImageSizes::init();
 KOP\Snippets\DisableAuthorSitemap::init();
 KOP\Snippets\RelatedPosts::init();
 KOP\Snippets\Translations::init();
