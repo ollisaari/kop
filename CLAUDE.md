@@ -9,7 +9,7 @@ KOP is a WordPress plugin for https://kingdomofpeace.net/. The site is hosted on
 - **Theme:** twentytwentyfive
 - **Purpose:** Small snippet-style customizations. Larger features should get their own dedicated plugin.
 
-Current features include admin menu customizations and shortcodes for block patterns and related posts.
+Current features include admin menu customizations, shortcodes, image size limits, archive title customizations, and sitemap adjustments.
 
 ## Commands
 
@@ -29,9 +29,12 @@ composer install --no-dev --optimize-autoloader
 ### Snippets (in `src/Snippets/`)
 Each snippet is a separate class under `KOP\Snippets` namespace with a static `init()` method.
 
-- `BlockPatterns` - Admin menu link + shortcodes:
-  - `[block_pattern id="123"]` - Renders reusable blocks (supports Polylang)
-  - `[related_posts_by_tags]` - Shows related posts based on shared tags
+- `ArchiveTitles` - Customizes archive page titles
+- `BlockPatterns` - Admin menu link + shortcode `[block_pattern id="123"]` for rendering reusable blocks (supports Polylang)
+- `DisableAuthorSitemap` - Disables author sitemap output
+- `ImageSizes` - Limits image sizes and responsive image output to 2048px max width
+- `RelatedPosts` - Shortcode `[related_posts_by_tags]` for showing related posts based on shared tags
+- `Translations` - Translation strings helper (used via `kop_t()` / `kop_t_e()`)
 
 ### Adding New Snippets
 
